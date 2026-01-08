@@ -3,20 +3,33 @@
 <script>
   (function () {
     const destino = "https://pay.kiwify.com.br/GVVSiXr";
+    const textoBotaoFinal = "Quero o eBook Agora";
 
-    document.addEventListener("click", function (e) {
-      const el = e.target;
+    // Observa mudanças na página (React renderiza depois)
+    const observer = new MutationObserver(() => {
+      const botoes = document.querySelectorAll("button");
 
-      if (
-        el.tagName === "BUTTON" ||
-        el.tagName === "A" ||
-        el.closest("button")
-      ) {
-        e.preventDefault();
-        e.stopPropagation();
-        window.location.href = destino;
-      }
-    }, true);
+      botoes.forEach((botao) => {
+        if (
+          botao.innerText &&
+          botao.innerText.includes(textoBotaoFinal) &&
+          !botao.dataset.conversao
+        ) {
+          botao.dataset.conversao = "true";
+
+          botao.addEventListener("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.location.href = destino;
+          });
+        }
+      });
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
   })();
 </script>
 </body></html>
